@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:login/firebase_options.dart';
 import 'auth/screen/login_screen.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

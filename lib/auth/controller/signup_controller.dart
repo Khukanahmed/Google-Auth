@@ -28,15 +28,14 @@ class SignupController extends GetxController {
         email: email,
         password: password,
       );
-      Get.to(
-        () => LoginScreen(),
-      );
+      Get.back();
       Get.snackbar('Success', 'Account created successfully');
       isLoading.value = false;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         logger.d("This email is already in use. Please try logging in.");
       }
+      EasyLoading.showSuccess('Successfull');
       isLoading.value = false;
     } finally {
       EasyLoading.dismiss();
