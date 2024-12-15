@@ -29,7 +29,7 @@ class SignupScreen extends StatelessWidget {
               height: 24,
             ),
             Form(
-              key: signupController.formKey,
+              key: signupController.signUpFormKey,
               child: Column(
                 children: [
                   CustomTextField(
