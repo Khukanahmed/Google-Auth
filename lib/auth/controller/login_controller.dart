@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../home/view/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -14,17 +15,39 @@ class LoginController extends GetxController {
 
   RxBool isValidEmail = true.obs;
   RxBool isValidPassword = true.obs;
-   var isLoading = false.obs;
+  var isLoading = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _saveLoginState(true);
+  }
+
+  Future<void> _saveLoginState(bool isLoggedIn) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
+  }
+
+  // Method to check login state
+  Future<bool> checkLoginState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ??
+        false; // Returns false if no value exists
+  }
+
+ 
 
   Future<void> login(String email, String password) async {
-     isLoading.value = true;
+    isLoading.value = true;
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       if (userCredential.user != null) {
-        // Use Get.offAll to remove previous routes and push the HomeScreen
+        
+        _saveLoginState(true);
+    
         Get.offAll(() => HomeScreen());
       }
     } catch (e) {
@@ -36,14 +59,13 @@ class LoginController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.black,
       );
-    }finally{
+    } finally {
       isLoading.value = false;
     }
   }
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
- 
   Future<void> signInWithGoogle() async {
     isLoading.value = true;
     try {

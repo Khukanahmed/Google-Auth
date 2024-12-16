@@ -10,6 +10,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: loginController.isLoading.value
           ? Center(
               child: CircularProgressIndicator(),
