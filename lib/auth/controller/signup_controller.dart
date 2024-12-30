@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import '../screen/login_screen.dart';
+
 
 class SignupController extends GetxController {
   var logger = Logger();
@@ -33,9 +33,9 @@ class SignupController extends GetxController {
       isLoading.value = false;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        logger.d("This email is already in use. Please try logging in.");
+        EasyLoading.showError(e.code);
       }
-      EasyLoading.showSuccess('Successfull');
+      //EasyLoading.showSuccess('Successfull');
       isLoading.value = false;
     } finally {
       EasyLoading.dismiss();
