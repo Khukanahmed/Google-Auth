@@ -5,7 +5,6 @@ import 'package:login/auth/controller/login_controller.dart';
 import 'package:login/firebase_options.dart';
 import 'auth/screen/login_screen.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
 import 'home/view/home_screen.dart';
 
 void main() async {
@@ -15,7 +14,6 @@ void main() async {
   );
   LoginController loginController = Get.put(LoginController());
 
- 
   bool isLoggedIn = await loginController.checkLoginState();
 
   runApp(MyApp(isLoggedIn: isLoggedIn));

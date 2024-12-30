@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../home/view/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import '../screen/login_screen.dart';
 
 class LoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -12,6 +14,8 @@ class LoginController extends GetxController {
   final passwordController = TextEditingController();
 
   final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  String? fcmToken;
 
   RxBool isValidEmail = true.obs;
   RxBool isValidPassword = true.obs;
@@ -21,6 +25,34 @@ class LoginController extends GetxController {
   void onInit() {
     super.onInit();
     _saveLoginState(true);
+    _initializeFCM();
+  }
+
+// Initialize Firebase Cloud Messaging
+  void _initializeFCM() async {
+    // Request permission for iOS
+    await _firebaseMessaging.requestPermission();
+
+    // Get the FCM token for push notifications
+    fcmToken = await _firebaseMessaging.getToken();
+
+    print(
+        "..................FCM Token: $fcmToken"); // You can use this token to send notifications from your server
+
+    // Handle background messages
+    FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+
+    // Handle foreground messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("Received message: ${message.notification?.title}");
+      // You can show notifications here using a local package like `flutter_local_notifications`
+    });
+  }
+
+  // Background message handler (for when app is closed)
+  static Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
+    print("Background message: ${message.notification?.title}");
+    // Handle background push notification
   }
 
   Future<void> _saveLoginState(bool isLoggedIn) async {
@@ -35,8 +67,6 @@ class LoginController extends GetxController {
         false; // Returns false if no value exists
   }
 
- 
-
   Future<void> login(String email, String password) async {
     isLoading.value = true;
     try {
@@ -45,20 +75,12 @@ class LoginController extends GetxController {
         password: password,
       );
       if (userCredential.user != null) {
-        
         _saveLoginState(true);
-    
+
         Get.offAll(() => HomeScreen());
       }
     } catch (e) {
       print("object........................");
-      Get.snackbar(
-        'Login Failed',
-        e.toString(),
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.black,
-      );
     } finally {
       isLoading.value = false;
     }
@@ -118,5 +140,12 @@ class LoginController extends GetxController {
       // Get.to(() => HomeScreen());
     } else {}
     //Get.to(() => HomeScreen());
+  }
+
+  Future<void> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', false); // Clear login state
+    await auth.signOut();
+    Get.offAll(() => LoginScreen()); // Navigate back to LoginScreen
   }
 }

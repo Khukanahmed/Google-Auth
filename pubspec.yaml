@@ -41,6 +41,11 @@ dependencies:
   logger: ^2.5.0
   flutter_easyloading: ^3.0.5
   shared_preferences: ^2.3.3
+  badges: ^3.1.2
+  firebase_messaging: ^15.1.6
+  flutter_local_notifications: 
+   
+  
  
 
 dev_dependencies:
