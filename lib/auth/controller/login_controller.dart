@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -36,22 +37,27 @@ class LoginController extends GetxController {
     // Get the FCM token for push notifications
     fcmToken = await _firebaseMessaging.getToken();
 
-    print(
-        "..................FCM Token: $fcmToken"); // You can use this token to send notifications from your server
+    if (kDebugMode) {
+      print("..................FCM Token: $fcmToken");
+    } // You can use this token to send notifications from your server
 
     // Handle background messages
     FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
 
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("Received message: ${message.notification?.title}");
+      if (kDebugMode) {
+        print("Received message: ${message.notification?.title}");
+      }
       // You can show notifications here using a local package like `flutter_local_notifications`
     });
   }
 
   // Background message handler (for when app is closed)
   static Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
-    print("Background message: ${message.notification?.title}");
+    if (kDebugMode) {
+      print("Background message: ${message.notification?.title}");
+    }
     // Handle background push notification
   }
 
@@ -80,7 +86,9 @@ class LoginController extends GetxController {
         Get.offAll(() => HomeScreen());
       }
     } catch (e) {
-      print("object........................");
+      if (kDebugMode) {
+        print("object........................");
+      }
     } finally {
       isLoading.value = false;
     }
@@ -100,12 +108,14 @@ class LoginController extends GetxController {
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      final OAuthCredential credential = GoogleAuthProvider.credential(
+      GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
     } catch (error) {
-      print(".................Google Sign-In Error: $error");
+      if (kDebugMode) {
+        print(".................Google Sign-In Error: $error");
+      }
     } finally {
       isLoading.value = false;
     }
