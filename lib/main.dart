@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:login/auth/controller/login_controller.dart';
 import 'package:login/firebase_options.dart';
+import 'package:login/home/view/home_screen.dart';
 import 'auth/screen/login_screen.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'home/view/home_screen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
